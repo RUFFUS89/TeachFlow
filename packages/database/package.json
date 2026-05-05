@@ -1,0 +1,15 @@
+{
+  "name": "@teachflow/database",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "type-check": "tsc --noEmit",
+    "generate-types": "echo 'Run: supabase gen types typescript --linked > src/database.types.ts'"
+  },
+  "devDependencies": {
+    "@teachflow/config": "workspace:*",
+    "typescript": "^5.6.0"
+  }
+}

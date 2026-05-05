@@ -1,0 +1,29 @@
+{
+  "name": "teachflow",
+  "version": "0.1.0",
+  "private": true,
+  "description": "TeachFlow — sistema de gestão escolar (monorepo)",
+  "packageManager": "pnpm@9.15.0",
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "dev:all": "concurrently -k -n backend,frontend -c cyan,magenta \"pnpm dev:backend\" \"pnpm dev:frontend\"",
+    "dev:backend": "powershell -NoProfile -Command \"$env:PYTHONIOENCODING='utf-8'; $env:PYTHONUTF8='1'; cd backend; uv run fastapi dev app/main.py\"",
+    "dev:frontend": "pnpm --filter @teachflow/web dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "type-check": "turbo run type-check",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\" --ignore-path .gitignore",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\" --ignore-path .gitignore"
+  },
+  "devDependencies": {
+    "concurrently": "^9",
+    "prettier": "^3.4.0",
+    "prettier-plugin-tailwindcss": "^0.6.0",
+    "turbo": "^2.3.0",
+    "typescript": "^5.6.0"
+  }
+}
