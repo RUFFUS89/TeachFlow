@@ -12,9 +12,14 @@ from app.models import Base  # noqa: F401
 
 config = context.config
 
-# URL vem do .env, não do alembic.ini
+# URL vem do .env, não do alembic.ini.
+# Alembic usa driver síncrono — força "postgresql+psycopg" pra usar psycopg v3
+# (o app tem psycopg[binary], não psycopg2; sem o prefixo, SQLAlchemy procura psycopg2).
 settings = get_settings()
-config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
+sync_url = settings.DATABASE_URL
+if sync_url.startswith("postgresql://"):
+    sync_url = sync_url.replace("postgresql://", "postgresql+psycopg://", 1)
+config.set_main_option("sqlalchemy.url", sync_url)
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)

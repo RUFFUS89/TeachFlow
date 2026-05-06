@@ -2,14 +2,12 @@
 
 import { ApiError } from "@teachflow/api-client";
 import type { Me } from "@teachflow/database";
-import { useRouter } from "next/navigation";
+import { Card, PageHeader, Skeleton } from "@teachflow/ui";
 import { useEffect, useState } from "react";
 
 import { useApiClient } from "@/lib/api";
-import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 export function DashboardClient() {
-  const router = useRouter();
   const api = useApiClient();
   const [me, setMe] = useState<Me | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -39,69 +37,49 @@ export function DashboardClient() {
     };
   }, [api]);
 
-  async function handleSignOut() {
-    const supabase = createSupabaseBrowserClient();
-    await supabase.auth.signOut();
-    router.push("/login");
-    router.refresh();
-  }
-
   return (
-    <div className="max-w-3xl mx-auto">
-      <header className="flex items-baseline justify-between mb-10">
-        <div>
-          <p className="font-mono text-xs tracking-widest uppercase text-inkMuted">
-            TeachFlow
-          </p>
-          <h1 className="font-display text-3xl text-ink">Dashboard</h1>
-        </div>
-        <button
-          onClick={handleSignOut}
-          className="text-sm text-inkSoft hover:text-ink transition"
-        >
-          Sair
-        </button>
-      </header>
+    <div className="mx-auto flex max-w-3xl flex-col gap-6">
+      <PageHeader
+        eyebrow="TeachFlow"
+        title="Dashboard"
+        description="Validação técnica end-to-end (Supabase Auth → FastAPI → Postgres). Refeito de verdade na Fase 2."
+      />
 
-      {loading && (
-        <div className="bg-surface border border-border rounded-card p-6 text-inkMuted">
-          Carregando perfil…
-        </div>
-      )}
+      {loading && <Skeleton className="h-32" />}
 
       {error && (
-        <div className="bg-blush/30 border border-blushInk/20 rounded-card p-6">
-          <p className="font-medium text-blushInk mb-2">Erro ao carregar perfil</p>
-          <p className="text-sm text-blushInk/90 font-mono">{error}</p>
-          <p className="text-sm text-inkSoft mt-3">
+        <Card tone="blush">
+          <p className="font-medium">Erro ao carregar perfil</p>
+          <p className="mt-2 font-mono text-sm">{error}</p>
+          <p className="mt-3 text-sm">
             Verifique se o backend FastAPI está rodando em{" "}
-            <code className="font-mono bg-surface2 px-1 rounded">
+            <code className="rounded bg-surface2 px-1 font-mono">
               {process.env.NEXT_PUBLIC_API_URL}
             </code>{" "}
             e se o <code className="font-mono">.env.local</code> tem as chaves do Supabase.
           </p>
-        </div>
+        </Card>
       )}
 
       {me && (
-        <div className="space-y-6">
-          <div className="bg-sage rounded-card p-6">
-            <p className="font-mono text-xs tracking-widest uppercase text-sageInk/70 mb-2">
-              ✓ Stack funcionando ponta a ponta
+        <>
+          <Card tone="sage">
+            <p className="font-mono text-xs uppercase tracking-widest opacity-70">
+              Stack funcionando ponta a ponta
             </p>
-            <h2 className="font-display text-2xl text-sageInk leading-tight">
+            <h2 className="mt-2 font-display text-2xl leading-tight">
               Olá, {me.profile.full_name}
             </h2>
-            <p className="text-sageInk/80 text-sm mt-1">
+            <p className="mt-1 text-sm opacity-80">
               Frontend → Supabase Auth → Backend FastAPI → Postgres. Tudo conversa.
             </p>
-          </div>
+          </Card>
 
-          <section className="bg-surface border border-border rounded-card p-6">
-            <h3 className="font-display text-lg text-ink mb-4">Seu perfil</h3>
+          <Card>
+            <h3 className="mb-4 font-display text-lg text-ink">Seu perfil</h3>
             <dl className="grid grid-cols-[140px_1fr] gap-y-2 text-sm">
               <dt className="text-inkMuted">ID</dt>
-              <dd className="font-mono text-xs text-inkSoft break-all">{me.profile.id}</dd>
+              <dd className="break-all font-mono text-xs text-inkSoft">{me.profile.id}</dd>
               <dt className="text-inkMuted">Nome</dt>
               <dd className="text-ink">{me.profile.full_name}</dd>
               <dt className="text-inkMuted">Filiais</dt>
@@ -123,8 +101,8 @@ export function DashboardClient() {
                 )}
               </dd>
             </dl>
-          </section>
-        </div>
+          </Card>
+        </>
       )}
     </div>
   );

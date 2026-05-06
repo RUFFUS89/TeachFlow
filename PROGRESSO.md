@@ -367,3 +367,41 @@ pnpm dev:frontend    # só frontend
 
 ✅ Fundação técnica completa e validada.
 ⏭️ Próxima fase: construção das telas de produto, peça por peça, com Claude Code orientado pelo `CLAUDE.md` e usando os `screen-*.jsx` como referência visual.
+
+---
+
+## 10. Construção das telas — Fase 0 concluída em 2026-05-06
+
+Plano completo das 8 fases v1 web está em `~/.claude/plans/modo-plano-vou-construir-temporal-kitten.md`.
+
+### Fase 0 — Preparação compartilhada (✅ concluída)
+
+- **Schema versionado:** `backend/db/schema.sql` (122KB) gerado via `pg_dump 17.9` contra o Supabase (24 tabelas + 7 storage + 130 outros objetos: types, views, indexes, RLS policies, triggers, functions). PostgreSQL 17 client tools instalados via winget. README com instruções de regeneração em `backend/db/README.md`.
+- **Alembic baseline:** revision vazia em `backend/alembic/versions/2026_05_06_1357-baseline_baseline.py` + `alembic stamp baseline` aplicado. Daqui pra frente, mudanças via `alembic revision --autogenerate -m "..."`.
+- **Driver fix:** `backend/alembic/env.py` força `postgresql+psycopg` (Alembic é sync; o projeto usa `psycopg` v3, não `psycopg2`).
+- **`packages/utils` (novo):** `formatDate`, `formatRelativeTime`, `formatMinutes/Seconds`, `formatScore`, `pluralize`, `slugify`, `initialsOf`, `clamp`. Locale pt-BR via `date-fns`.
+- **`packages/ui` (novo):** `cn` helper, `Tone` tokens, `Icon` (mapa de 50 strings → lucide-react), `Button`/`Card`/`Chip`/`Avatar`/`Input`/`Textarea`/`Select`/`Checkbox`/`Label`, `Badge`/`Skeleton`/`Spinner`/`EmptyState`, `AppShell`/`Sidebar`/`TopBar`/`PageHeader`/`TabPills`/`Modal`, `Ring`/`ProgressBar`/`Stat`, `Blob`/`PaperBg`, hooks `useDisclosure`/`useMediaQuery`.
+- **Deps adicionadas em apps/web:** `lucide-react`, `date-fns`, `clsx`, `tailwind-merge`, `sonner`. Tailwind config estendido pra varrer `packages/ui/src/**`.
+- **AppShell montado:** route group `app/(app)/` com `layout.tsx` + `_components/app-shell-client.tsx` (sidebar colapsável persistida em `localStorage` + topbar com avatar/sair; itens variam por role). Role mockado por enquanto — Fase 1 conecta com `/api/v1/me`.
+- **`/dashboard` migrado** pra dentro de `(app)/` (continua sendo validador end-to-end; reescrito de verdade na Fase 2).
+- **`/playground`** em `app/(app)/playground/page.tsx` — vitrine de todas as primitives. **Apagar antes da Fase 1.**
+- **Validação:** `pnpm -r type-check` verde nos 5 packages + apps/web. `next build` produz bundle válido (5 rotas: `/`, `/login`, `/dashboard`, `/playground`, `/_not-found`).
+
+### Decisões macro confirmadas (input do humano em 2026-05-06)
+- **Rotas separadas:** `/dashboard` (owner+admin) × `/feed` (usuario). Middleware redireciona por role.
+- **Rubrica configurável** por assignment com seed automático "Redação ENEM" (5 competências × 200 pts) quando `type='exam'`. Seed como constante Python.
+- **Convite por código manual** (sem SMTP): tabela `invite_codes` + rota pública `/redeem/[code]`.
+
+### Achados durante execução (corrigir no plano se ainda referenciado)
+- `submission_answers` (plano Fase 5) → no schema real chama **`quiz_responses`**.
+- `lesson_materials` (plano Fase 4) → no schema real chama **`lesson_attachments`**.
+
+### Próximas fases
+1. **Fase 1** (1 sessão): refinar `/login` + criar `/onboarding` + middleware redirect por role.
+2. **Fase 2** (2 sessões): Dashboard professor (Course CRUD + stats agregados).
+3. **Fase 3** (3 sessões): Course detail (modules, items, sequence, activity feed).
+4. **Fase 4** (2 sessões): Lesson player (video embed + comments + progress).
+5. **Fase 5** (2 sessões): Quiz builder (assignments + questions + options).
+6. **Fase 6** (3 sessões): Activities (correção com critérios ENEM).
+7. **Fase 7** (3 sessões): Branches (OWNER) + convites por código.
+8. **Fase 8** (2 sessões): Student feed (`/feed`).
