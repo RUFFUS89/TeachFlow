@@ -12,7 +12,7 @@
  *   const me = await api.me.get();
  */
 
-import type { Branch, Me } from "@teachflow/database";
+import type { Branch, Course, CourseListItem, DashboardStats, Me } from "@teachflow/database";
 
 // =============================================================================
 // Tipos auxiliares
@@ -128,6 +128,38 @@ export function createApiClient(options: ApiClientOptions) {
       /** PATCH /api/v1/branches/{id} — só owner */
       update: (id: string, data: Partial<Branch>) =>
         request<Branch>(`/api/v1/branches/${id}`, { method: "PATCH", body: data }),
+    },
+
+    dashboard: {
+      /** GET /api/v1/dashboard/stats?branch_id= — 4 contadores do dashboard professor */
+      stats: (branchId: string) =>
+        request<DashboardStats>("/api/v1/dashboard/stats", {
+          searchParams: { branch_id: branchId },
+        }),
+    },
+
+    courses: {
+      /** GET /api/v1/courses/?branch_id= — lista cursos da filial (staff) */
+      list: (params: { branch_id: string; status?: string }) =>
+        request<CourseListItem[]>("/api/v1/courses/", { searchParams: params }),
+
+      /** POST /api/v1/courses/ — cria curso */
+      create: (data: {
+        branch_id: string;
+        title: string;
+        description?: string | null;
+        cover_url?: string | null;
+        color_tone?: string | null;
+      }) => request<Course>("/api/v1/courses/", { method: "POST", body: data }),
+
+      /** GET /api/v1/courses/{id} */
+      get: (id: string) => request<Course>(`/api/v1/courses/${id}`),
+
+      /** PATCH /api/v1/courses/{id} */
+      update: (
+        id: string,
+        data: Partial<Pick<Course, "title" | "description" | "cover_url" | "color_tone" | "status">>,
+      ) => request<Course>(`/api/v1/courses/${id}`, { method: "PATCH", body: data }),
     },
   };
 }

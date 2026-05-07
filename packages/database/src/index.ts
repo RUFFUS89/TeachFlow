@@ -109,6 +109,67 @@ export interface Me {
 }
 
 // =============================================================================
+// Cursos
+// =============================================================================
+
+export interface Course {
+  id: string;
+  branch_id: string;
+  author_id: string;
+  title: string;
+  description: string | null;
+  cover_url: string | null;
+  color_tone: string | null;
+  status: CourseStatus;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CourseListItem extends Course {
+  students_count: number;
+  items_count: number;
+}
+
+export interface CourseModule {
+  id: string;
+  course_id: string;
+  name: string;
+  position: number;
+  created_at: string;
+}
+
+export interface CourseItem {
+  id: string;
+  course_id: string;
+  module_id: string | null;
+  position: number;
+  kind: CourseItemKind;
+  lesson_id: string | null;
+  assignment_id: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CourseEnrollment {
+  id: string;
+  course_id: string;
+  student_profile_id: string;
+  enrolled_at: string;
+  completed_at: string | null;
+}
+
+// =============================================================================
+// Dashboard
+// =============================================================================
+
+export interface DashboardStats {
+  active_courses: number;
+  active_students: number;
+  pending_submissions: number;
+  weekly_activity_count: number;
+}
+
+// =============================================================================
 // Re-exports de conveniência
 // =============================================================================
 

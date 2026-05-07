@@ -5,12 +5,18 @@ import { getMeOrNull, highestRole } from "@/lib/me";
 import { DashboardClient } from "./dashboard-client";
 
 export default async function DashboardPage() {
-  // Defesa em profundidade: se aluno chegou aqui, manda pro feed.
   const me = await getMeOrNull();
   if (!me) redirect("/login");
   const role = highestRole(me);
   if (!role) redirect("/onboarding");
   if (role === "usuario") redirect("/feed");
 
-  return <DashboardClient />;
+  // Seleciona a membership de staff mais alta (owner > admin)
+  const staffMembership =
+    me.memberships.find((m) => m.role === "owner" && m.status === "active") ??
+    me.memberships.find((m) => m.role === "admin" && m.status === "active");
+
+  if (!staffMembership) redirect("/onboarding");
+
+  return <DashboardClient branchId={staffMembership.branch_id} />;
 }

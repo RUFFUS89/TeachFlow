@@ -4,6 +4,14 @@ Conforme adicionar novos arquivos em app/models/, importe-os aqui.
 """
 
 from app.models.base import Base
+from app.models.course import (
+    Course,
+    CourseEnrollment,
+    CourseItem,
+    CourseItemKind,
+    CourseModule,
+    CourseStatus,
+)
 from app.models.identity import (
     Branch,
     BranchMember,
@@ -19,6 +27,12 @@ __all__ = [
     "Branch",
     "BranchMember",
     "BranchRole",
+    "Course",
+    "CourseEnrollment",
+    "CourseItem",
+    "CourseItemKind",
+    "CourseModule",
+    "CourseStatus",
     "MemberStatus",
     "Profile",
     "TutorContact",
