@@ -392,9 +392,30 @@ Plano completo das 8 fases v1 web está em `~/.claude/plans/modo-plano-vou-const
 - **Rubrica configurável** por assignment com seed automático "Redação ENEM" (5 competências × 200 pts) quando `type='exam'`. Seed como constante Python.
 - **Convite por código manual** (sem SMTP): tabela `invite_codes` + rota pública `/redeem/[code]`.
 
-### Achados durante execução (corrigir no plano se ainda referenciado)
-- `submission_answers` (plano Fase 5) → no schema real chama **`quiz_responses`**.
-- `lesson_materials` (plano Fase 4) → no schema real chama **`lesson_attachments`**.
+### Achados durante execução (já corrigidos no plano)
+
+Confronto entre o plano original e o schema real:
+
+| Plano | Schema real | Onde |
+|---|---|---|
+| `submission_answers` | **`quiz_responses`** | Fase 5 |
+| `lesson_materials` | **`lesson_attachments`** | Fase 4 |
+| `Course.owner_profile_id`, `slug`, `started_at`, `ends_at` | `Course.author_id`, sem slug nem datas; tem **`color_tone`** | Fase 2 |
+| `CourseModule.title` | `course_modules.name` | Fase 3 |
+| `CourseEnrollment.profile_id`, `status` | `student_profile_id`, sem coluna status (controle por `completed_at`) | Fases 2/3 |
+| `Lesson.summary`, `body_md`, `transcript_md`, `position` | `description`, `content`, sem transcript dedicado, posição vem de `course_items.position`. Tem extras: **`is_essential`**, **`published_at`**, **`video_duration_seconds`**, `author_id` | Fase 4 |
+| `LessonComment` flat | Schema **suporta replies** via `parent_id`. Decisão: render flat no v1 | Fase 4 |
+| `ItemProgress.position_seconds` | `watch_seconds` + `student_profile_id` | Fase 4 |
+| `Assignment.instructions_md`, `due_at`, `allow_late` | `instructions`, `due_date`, `allow_late_submission`. Tem extras: **`weight`**, **`feedback_mode`** [`immediate`/`on_submit`/`manual_release`], **`pass_threshold_percent`**, **`shuffle_questions`**, **`available_from`**, **`published_at`**, `author_id` | Fase 5 |
+| `QuizQuestion.prompt_md` | `prompt` (text). Tem `hint` opcional | Fase 5 |
+| `QuizOption.label` | `content` | Fase 5 |
+| `Submission.feedback_md`, `attempt_no`, `started_at`, `returned_at` | Sem feedback na submission; `attempt`; `content`; status enum cobre `returned` | Fase 5/6 |
+| Plano não tinha `grades` separado | **`grades`** é entidade dedicada (id, assignment_id, student_profile_id, submission_id?, score, feedback, **graded_by**, graded_at, **released_at**). `submissions.score` é cache denormalizado | Fase 6 |
+| Plano não tinha `submission_attachments` | Existe — pra anexos da entrega (PDF de redação etc.) | Fase 6 |
+| `AssignmentCriterion.label` | `name` | Fase 6 |
+| `Notification` campos | `recipient_profile_id`, `body`, `link`, **`metadata jsonb`** | Fase 8 |
+| `DailyActivity` complexo | Simples: `(profile_id, date, count)` PK composta | Fase 8 |
+| Plano não previa `quiz_feedback_mode` enum | Existe no schema; expor em `packages/database` | Fase 5 |
 
 ### Próximas fases
 1. **Fase 1** (1 sessão): refinar `/login` + criar `/onboarding` + middleware redirect por role.
