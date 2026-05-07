@@ -6,8 +6,9 @@ import { useState } from "react";
 
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
-export function LoginForm() {
+export function SignupForm() {
   const router = useRouter();
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -19,24 +20,38 @@ export function LoginForm() {
     setLoading(true);
 
     const supabase = createSupabaseBrowserClient();
-    const { error: authError } = await supabase.auth.signInWithPassword({
+    const { error: signUpError } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        data: { full_name: fullName },
+      },
     });
 
-    if (authError) {
-      setError(authError.message);
+    if (signUpError) {
+      setError(signUpError.message);
       setLoading(false);
       return;
     }
 
-    // Middleware atualiza cookies; layout (app) decide pra onde mandar.
-    router.push("/");
+    // Auto-confirm está ativo no projeto Supabase de dev — usuário já vem
+    // logado na sessão. Em produção (auto-confirm off), aqui iria pra
+    // tela "verifique seu email".
+    router.push("/onboarding");
     router.refresh();
   }
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <Input
+        label="Nome completo"
+        id="full_name"
+        autoComplete="name"
+        required
+        value={fullName}
+        onChange={(event) => setFullName(event.target.value)}
+        placeholder="Joser Rufino"
+      />
       <Input
         label="E-mail"
         id="email"
@@ -45,17 +60,18 @@ export function LoginForm() {
         required
         value={email}
         onChange={(event) => setEmail(event.target.value)}
-        placeholder="voce@teachflow.com"
+        placeholder="voce@instituicao.com"
       />
       <Input
         label="Senha"
         id="password"
         type="password"
-        autoComplete="current-password"
+        autoComplete="new-password"
         required
+        minLength={8}
         value={password}
         onChange={(event) => setPassword(event.target.value)}
-        placeholder="••••••••"
+        helper="Mínimo 8 caracteres."
       />
 
       {error && (
@@ -65,7 +81,7 @@ export function LoginForm() {
       )}
 
       <Button type="submit" size="lg" full loading={loading} iconRight="arrow-right">
-        Entrar
+        Criar conta e seguir
       </Button>
     </form>
   );

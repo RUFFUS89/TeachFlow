@@ -2,12 +2,27 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 /**
- * Middleware do Next.js — refresca a sessão Supabase a cada request.
- * Necessário pra Server Components verem o usuário logado.
+ * Refresca a sessão Supabase e força auth básica.
  *
- * Também redireciona requests não autenticados pra /login (exceto
- * a própria /login e rotas públicas).
+ * O role-based redirect (aluno → /feed, staff → /dashboard, sem membership →
+ * /onboarding) acontece no server component `app/(app)/layout.tsx`, que
+ * consulta `/api/v1/me` no backend. Aqui só cuidamos de:
+ *   - mandar usuário não autenticado pra /login;
+ *   - tirar usuário autenticado de páginas de auth (/login, /signup);
+ *   - manter `/redeem/...` público (Fase 7).
  */
+
+const PUBLIC_ROUTES = new Set(["/", "/login", "/signup"]);
+
+function isPublic(pathname: string): boolean {
+  if (PUBLIC_ROUTES.has(pathname)) return true;
+  return pathname.startsWith("/redeem/") || pathname.startsWith("/auth/");
+}
+
+function isAuthRoute(pathname: string): boolean {
+  return pathname === "/login" || pathname === "/signup" || pathname.startsWith("/auth/");
+}
+
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({
     request: { headers: request.headers },
@@ -41,20 +56,19 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const { pathname } = request.nextUrl;
-  const isAuthRoute = pathname.startsWith("/login") || pathname.startsWith("/auth");
-  const isPublicRoute = isAuthRoute || pathname === "/";
 
-  // Não autenticado tentando acessar rota privada → manda pro login
-  if (!user && !isPublicRoute) {
+  // Não autenticado → manda pro login (exceto rotas públicas).
+  if (!user && !isPublic(pathname)) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
   }
 
-  // Já autenticado tentando entrar em /login → manda pro dashboard
-  if (user && isAuthRoute) {
+  // Autenticado tentando entrar em /login ou /signup → manda pra raiz,
+  // que o (app)/layout decide por role.
+  if (user && isAuthRoute(pathname)) {
     const url = request.nextUrl.clone();
-    url.pathname = "/dashboard";
+    url.pathname = "/";
     return NextResponse.redirect(url);
   }
 

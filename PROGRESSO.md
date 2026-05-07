@@ -417,9 +417,22 @@ Confronto entre o plano original e o schema real:
 | `DailyActivity` complexo | Simples: `(profile_id, date, count)` PK composta | Fase 8 |
 | Plano não previa `quiz_feedback_mode` enum | Existe no schema; expor em `packages/database` | Fase 5 |
 
+### Fase 1 — Auth / Onboarding (✅ concluída em 2026-05-06)
+
+- **`/login`** refinado: layout split (brand+blob esquerda × form direita) usando `@teachflow/ui` (Input, Button, Card, Blob). Link pra `/signup` e dica sobre `/redeem/[code]`.
+- **`/signup`** (novo): cadastro de OWNER novo via Supabase `signUp` (com `data.full_name` no metadata). Após signup, redireciona pra `/onboarding`.
+- **`/onboarding`** (novo): server component checa `/api/v1/me/`; se já tem membership ativa, redireciona conforme role. Se não, renderiza form (nome, slug auto-gerado via `slugify`, cidade, UF, CNPJ opcional) que chama `POST /api/v1/branches/`. Backend já cria `BranchMember` com role `owner` na mesma transação.
+- **`middleware.ts`** simplificado: cuida só de auth (não autenticado em rota privada → `/login`; autenticado em `/login`/`/signup` → `/`). Cross-role e onboarding redirect ficam nas páginas.
+- **`app/(app)/layout.tsx`** virou server component: busca `/me`, redireciona pra `/login` (sem sessão) ou `/onboarding` (sem membership), e passa profile + role reais pro `AppShellClient`.
+- **`app/page.tsx`** (home): redireciona autenticado pra destino correto via `routeFor(me)`. Não-autenticado vê landing com botões Entrar/Criar conta.
+- **`lib/api-server.ts`** (novo): factory `createServerApiClient()` que pega JWT do cookie Supabase via `createSupabaseServerClient` e injeta no api-client.
+- **`lib/me.ts`** (novo): `getMeOrNull()` (trata 401/404 como anônimo), `highestRole(me)` (decide entre owner/admin/usuario), `routeFor(me)` (`/onboarding` | `/dashboard` | `/feed`).
+- **`/dashboard/page.tsx`**: defesa em profundidade — aluno chegando aqui é mandado pra `/feed`.
+- `/playground` deletado.
+- `pnpm -r type-check` verde, `next build` OK (6 rotas: `/`, `/login`, `/signup`, `/onboarding`, `/dashboard`, `/_not-found`).
+
 ### Próximas fases
-1. **Fase 1** (1 sessão): refinar `/login` + criar `/onboarding` + middleware redirect por role.
-2. **Fase 2** (2 sessões): Dashboard professor (Course CRUD + stats agregados).
+1. **Fase 2** (2 sessões): Dashboard professor (Course CRUD + stats agregados).
 3. **Fase 3** (3 sessões): Course detail (modules, items, sequence, activity feed).
 4. **Fase 4** (2 sessões): Lesson player (video embed + comments + progress).
 5. **Fase 5** (2 sessões): Quiz builder (assignments + questions + options).

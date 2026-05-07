@@ -1,19 +1,35 @@
+import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
+
+import { getMeOrNull, highestRole } from "@/lib/me";
 
 import { AppShellClient } from "./_components/app-shell-client";
 
 /**
  * Layout do route group `(app)` — todas as telas autenticadas vivem aqui.
  *
- * Fase 0: usa dados mockados (role default OWNER) só pra validar o shell visualmente.
- * Fase 1: vai buscar `/api/v1/me` no server e passar role/profile reais.
+ * Server component que:
+ *  - Busca `/api/v1/me` via JWT do cookie Supabase.
+ *  - Sem sessão → /login.
+ *  - Sem membership → /onboarding.
+ *  - Renderiza o AppShell com profile + role reais.
+ *
+ * O cross-role redirect (aluno tentando /dashboard, staff tentando /feed)
+ * acontece nas páginas individuais — Layout não tem acesso ao pathname
+ * sem injeção via middleware. Defesa em profundidade está em cada page.
  */
-export default function AppGroupLayout({ children }: { children: ReactNode }) {
+export default async function AppGroupLayout({ children }: { children: ReactNode }) {
+  const me = await getMeOrNull();
+  if (!me) redirect("/login");
+
+  const role = highestRole(me);
+  if (!role) redirect("/onboarding");
+
   return (
     <AppShellClient
-      userName="Joser Rufino"
-      userEmail="joserufinoneto25@gmail.com"
-      role="owner"
+      userName={me.profile.full_name}
+      avatarUrl={me.profile.avatar_url}
+      role={role}
     >
       {children}
     </AppShellClient>
