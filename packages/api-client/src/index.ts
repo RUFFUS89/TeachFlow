@@ -31,6 +31,7 @@ import type {
   CourseModule,
   CriterionScore,
   DashboardStats,
+  FeedResponse,
   Grade,
   GradeInput,
   InviteCode,
@@ -46,6 +47,7 @@ import type {
   QuizOption,
   QuizQuestion,
   SaveCriteriaPayload,
+  StreakDay,
   Submission,
   SubmissionDetail,
   SubmissionListItem,
@@ -519,6 +521,30 @@ export function createApiClient(options: ApiClientOptions) {
             method: "POST",
           }),
       },
+    },
+
+    feed: {
+      /** GET /api/v1/feed/me — feed personalizado do aluno */
+      me: () => request<FeedResponse>("/api/v1/feed/me"),
+
+      /** GET /api/v1/feed/streak?days= — heatmap de atividade */
+      streak: (days?: number) =>
+        request<StreakDay[]>("/api/v1/feed/streak", {
+          searchParams: days !== undefined ? { days } : undefined,
+        }),
+    },
+
+    notifications: {
+      /** GET /api/v1/notifications/ — últimas 50 notificações */
+      list: () => request<Notification[]>("/api/v1/notifications/"),
+
+      /** POST /api/v1/notifications/{id}/read — marca uma como lida */
+      markRead: (id: string) =>
+        request<void>(`/api/v1/notifications/${id}/read`, { method: "POST" }),
+
+      /** POST /api/v1/notifications/read-all — marca todas como lidas */
+      markAllRead: () =>
+        request<void>("/api/v1/notifications/read-all", { method: "POST" }),
     },
 
     submissions: {

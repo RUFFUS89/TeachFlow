@@ -13,10 +13,12 @@ from app.routers import (
     branches,
     courses,
     dashboard,
+    feed,
     health,
     invites,
     lessons,
     me,
+    notifications,
     submissions,
 )
 
@@ -59,6 +61,8 @@ app.include_router(lessons.router, prefix="/api/v1")
 app.include_router(assignments.router, prefix="/api/v1")
 app.include_router(submissions.router, prefix="/api/v1")
 app.include_router(invites.router, prefix="/api/v1")
+app.include_router(feed.router, prefix="/api/v1")
+app.include_router(notifications.router, prefix="/api/v1")
 
 
 @app.get("/", include_in_schema=False)

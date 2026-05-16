@@ -473,6 +473,54 @@ export interface Notification {
 }
 
 // =============================================================================
+// Feed do aluno (Fase 8)
+// =============================================================================
+
+export interface FeedContinueItem {
+  course_item_id: string;
+  lesson_id: string;
+  lesson_title: string;
+  course_id: string;
+  course_title: string;
+  color_tone: string | null;
+  watch_seconds: number | null;
+}
+
+export interface EnrolledCourseItem {
+  course_id: string;
+  title: string;
+  description: string | null;
+  color_tone: string | null;
+  cover_url: string | null;
+  status: CourseStatus;
+  enrolled_at: string;
+  completed_at: string | null;
+  total_items: number;
+  completed_items: number;
+}
+
+export interface DeadlineItem {
+  assignment_id: string;
+  title: string;
+  assignment_type: AssignmentType;
+  course_id: string;
+  course_title: string;
+  due_date: string;
+}
+
+export interface FeedResponse {
+  continue_item: FeedContinueItem | null;
+  enrolled_courses: EnrolledCourseItem[];
+  upcoming_deadlines: DeadlineItem[];
+  streak_days: number;
+}
+
+export interface StreakDay {
+  date: string;
+  count: number;
+}
+
+// =============================================================================
 // Re-exports de conveniência
 // =============================================================================
 

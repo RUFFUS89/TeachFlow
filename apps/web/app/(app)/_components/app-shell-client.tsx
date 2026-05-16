@@ -1,10 +1,12 @@
 "use client";
 
-import { Avatar, Button, Sidebar, TopBar, type SidebarItem } from "@teachflow/ui";
+import type { Notification } from "@teachflow/database";
+import { Avatar, Button, Icon, Sidebar, TopBar, type SidebarItem } from "@teachflow/ui";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
+import { useApiClient } from "@/lib/api";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 type Role = "owner" | "admin" | "usuario";
@@ -43,8 +45,12 @@ export interface AppShellClientProps {
 export function AppShellClient({ userName, avatarUrl, role, children }: AppShellClientProps) {
   const pathname = usePathname() ?? "/";
   const router = useRouter();
+  const api = useApiClient();
   const [collapsed, setCollapsed] = useState(false);
   const [hydrated, setHydrated] = useState(false);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [bellOpen, setBellOpen] = useState(false);
+  const bellRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setHydrated(true);
@@ -57,6 +63,43 @@ export function AppShellClient({ userName, avatarUrl, role, children }: AppShell
     if (!hydrated || typeof window === "undefined") return;
     window.localStorage.setItem(COLLAPSE_KEY, collapsed ? "1" : "0");
   }, [collapsed, hydrated]);
+
+  // Polling de notificações a cada 60s
+  useEffect(() => {
+    let active = true;
+    async function poll() {
+      try {
+        const data = await api.notifications.list();
+        if (active) setNotifications(data);
+      } catch {
+        // silently ignore — sem auth ou backend fora
+      }
+    }
+    void poll();
+    const id = setInterval(poll, 60_000);
+    return () => {
+      active = false;
+      clearInterval(id);
+    };
+  }, [api]);
+
+  // Fecha dropdown ao clicar fora
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (bellRef.current && !bellRef.current.contains(e.target as Node)) {
+        setBellOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  async function handleMarkAllRead() {
+    await api.notifications.markAllRead().catch(() => null);
+    setNotifications((prev) => prev.map((n) => ({ ...n, read_at: new Date().toISOString() })));
+  }
+
+  const unreadCount = notifications.filter((n) => !n.read_at).length;
 
   async function handleSignOut() {
     const supabase = createSupabaseBrowserClient();
@@ -95,7 +138,57 @@ export function AppShellClient({ userName, avatarUrl, role, children }: AppShell
           }
           right={
             <>
-              <Button variant="ghost" size="sm" icon="bell" aria-label="Notificações" />
+              {/* Sino de notificações */}
+              <div ref={bellRef} className="relative">
+                <button
+                  className="relative flex h-8 w-8 items-center justify-center rounded-card text-inkMuted hover:bg-surface2 hover:text-ink"
+                  aria-label="Notificações"
+                  onClick={() => setBellOpen((o) => !o)}
+                >
+                  <Icon name="bell" size={16} />
+                  {unreadCount > 0 && (
+                    <span className="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[10px] font-bold text-white">
+                      {unreadCount > 9 ? "9+" : unreadCount}
+                    </span>
+                  )}
+                </button>
+
+                {bellOpen && (
+                  <div className="absolute right-0 top-10 z-50 w-80 rounded-card border border-border bg-surface shadow-lg">
+                    <div className="flex items-center justify-between border-b border-border px-4 py-2">
+                      <span className="text-sm font-semibold text-ink">Notificações</span>
+                      {unreadCount > 0 && (
+                        <button
+                          className="text-xs text-accent hover:underline"
+                          onClick={handleMarkAllRead}
+                        >
+                          Marcar todas como lidas
+                        </button>
+                      )}
+                    </div>
+                    <div className="max-h-72 overflow-y-auto">
+                      {notifications.length === 0 ? (
+                        <p className="px-4 py-6 text-center text-sm text-inkMuted">
+                          Nenhuma notificação.
+                        </p>
+                      ) : (
+                        notifications.map((n) => (
+                          <div
+                            key={n.id}
+                            className={`border-b border-border px-4 py-3 last:border-0 ${!n.read_at ? "bg-surface2/60" : ""}`}
+                          >
+                            <p className="text-sm font-medium text-ink">{n.title}</p>
+                            {n.body && (
+                              <p className="mt-0.5 text-xs text-inkMuted line-clamp-2">{n.body}</p>
+                            )}
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+
               <div className="flex items-center gap-2 pl-2">
                 <Avatar name={userName} src={avatarUrl ?? undefined} size="sm" />
                 <span className="hidden text-xs font-medium text-ink sm:inline">{userName}</span>
