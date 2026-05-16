@@ -12,7 +12,18 @@
  *   const me = await api.me.get();
  */
 
-import type { Branch, Course, CourseListItem, DashboardStats, Me } from "@teachflow/database";
+import type {
+  Branch,
+  Course,
+  CourseActivityItem,
+  CourseDetail,
+  CourseEnrollmentRead,
+  CourseItem,
+  CourseListItem,
+  CourseModule,
+  DashboardStats,
+  Me,
+} from "@teachflow/database";
 
 // =============================================================================
 // Tipos auxiliares
@@ -152,14 +163,82 @@ export function createApiClient(options: ApiClientOptions) {
         color_tone?: string | null;
       }) => request<Course>("/api/v1/courses/", { method: "POST", body: data }),
 
-      /** GET /api/v1/courses/{id} */
-      get: (id: string) => request<Course>(`/api/v1/courses/${id}`),
+      /** GET /api/v1/courses/{id} — detalhes com módulos e itens */
+      get: (id: string) => request<CourseDetail>(`/api/v1/courses/${id}`),
 
       /** PATCH /api/v1/courses/{id} */
       update: (
         id: string,
         data: Partial<Pick<Course, "title" | "description" | "cover_url" | "color_tone" | "status">>,
       ) => request<Course>(`/api/v1/courses/${id}`, { method: "PATCH", body: data }),
+
+      modules: {
+        /** POST /api/v1/courses/{id}/modules */
+        create: (courseId: string, data: { name: string }) =>
+          request<CourseModule>(`/api/v1/courses/${courseId}/modules`, {
+            method: "POST",
+            body: data,
+          }),
+
+        /** PATCH /api/v1/courses/{id}/modules/{moduleId} */
+        update: (courseId: string, moduleId: string, data: { name?: string; position?: number }) =>
+          request<CourseModule>(`/api/v1/courses/${courseId}/modules/${moduleId}`, {
+            method: "PATCH",
+            body: data,
+          }),
+
+        /** DELETE /api/v1/courses/{id}/modules/{moduleId} */
+        delete: (courseId: string, moduleId: string) =>
+          request<void>(`/api/v1/courses/${courseId}/modules/${moduleId}`, {
+            method: "DELETE",
+          }),
+      },
+
+      items: {
+        /** POST /api/v1/courses/{id}/items — cria shell de lesson ou assignment */
+        create: (
+          courseId: string,
+          data: { kind: "lesson" | "assignment"; title: string; module_id?: string | null },
+        ) =>
+          request<CourseItem>(`/api/v1/courses/${courseId}/items`, {
+            method: "POST",
+            body: data,
+          }),
+
+        /** PATCH /api/v1/courses/{id}/items/reorder */
+        reorder: (courseId: string, orderedIds: string[]) =>
+          request<void>(`/api/v1/courses/${courseId}/items/reorder`, {
+            method: "PATCH",
+            body: { ordered_ids: orderedIds },
+          }),
+
+        /** DELETE /api/v1/courses/{id}/items/{itemId} */
+        delete: (courseId: string, itemId: string) =>
+          request<void>(`/api/v1/courses/${courseId}/items/${itemId}`, { method: "DELETE" }),
+      },
+
+      enrollments: {
+        /** GET /api/v1/courses/{id}/enrollments */
+        list: (courseId: string) =>
+          request<CourseEnrollmentRead[]>(`/api/v1/courses/${courseId}/enrollments`),
+
+        /** POST /api/v1/courses/{id}/enrollments */
+        create: (courseId: string, data: { student_profile_id: string }) =>
+          request<CourseEnrollmentRead>(`/api/v1/courses/${courseId}/enrollments`, {
+            method: "POST",
+            body: data,
+          }),
+
+        /** DELETE /api/v1/courses/{id}/enrollments/{profileId} */
+        delete: (courseId: string, studentProfileId: string) =>
+          request<void>(`/api/v1/courses/${courseId}/enrollments/${studentProfileId}`, {
+            method: "DELETE",
+          }),
+      },
+
+      /** GET /api/v1/courses/{id}/activity */
+      activity: (courseId: string) =>
+        request<CourseActivityItem[]>(`/api/v1/courses/${courseId}/activity`),
     },
   };
 }

@@ -3,6 +3,7 @@
 Conforme adicionar novos arquivos em app/models/, importe-os aqui.
 """
 
+from app.models.assignment import Assignment, AssignmentType, QuizFeedbackMode
 from app.models.base import Base
 from app.models.course import (
     Course,
@@ -21,8 +22,11 @@ from app.models.identity import (
     TutorContact,
     TutorRelationshipType,
 )
+from app.models.lesson import Lesson, VideoProvider
 
 __all__ = [
+    "Assignment",
+    "AssignmentType",
     "Base",
     "Branch",
     "BranchMember",
@@ -33,8 +37,11 @@ __all__ = [
     "CourseItemKind",
     "CourseModule",
     "CourseStatus",
+    "Lesson",
     "MemberStatus",
     "Profile",
+    "QuizFeedbackMode",
     "TutorContact",
     "TutorRelationshipType",
+    "VideoProvider",
 ]

@@ -33,6 +33,8 @@ export type CourseItemKind = "lesson" | "assignment";
 
 export type AssignmentType = "task" | "quiz" | "exam" | "project";
 
+export type QuizFeedbackMode = "immediate" | "on_submit" | "manual_release";
+
 export type QuestionType =
   | "multiple_choice"
   | "true_false"
@@ -146,6 +148,7 @@ export interface CourseItem {
   kind: CourseItemKind;
   lesson_id: string | null;
   assignment_id: string | null;
+  title: string;
   created_at: string;
   updated_at: string;
 }
@@ -156,6 +159,72 @@ export interface CourseEnrollment {
   student_profile_id: string;
   enrolled_at: string;
   completed_at: string | null;
+}
+
+export interface CourseEnrollmentRead extends CourseEnrollment {
+  student_name: string;
+  student_avatar_url: string | null;
+}
+
+export interface CourseDetail extends Course {
+  modules: CourseModule[];
+  items: CourseItem[];
+  students_count: number;
+  items_count: number;
+}
+
+export interface CourseActivityItem {
+  kind: string;
+  actor_name: string;
+  actor_avatar_url: string | null;
+  description: string;
+  created_at: string;
+}
+
+// =============================================================================
+// Lições
+// =============================================================================
+
+export interface Lesson {
+  id: string;
+  course_id: string;
+  author_id: string;
+  title: string;
+  description: string | null;
+  content: string | null;
+  video_url: string | null;
+  video_provider: VideoProvider | null;
+  video_duration_seconds: number | null;
+  is_essential: boolean;
+  published_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+// =============================================================================
+// Atividades
+// =============================================================================
+
+export interface Assignment {
+  id: string;
+  course_id: string;
+  author_id: string;
+  title: string;
+  instructions: string | null;
+  type: AssignmentType;
+  max_score: number;
+  weight: number;
+  due_date: string | null;
+  available_from: string | null;
+  published_at: string | null;
+  allow_late_submission: boolean;
+  max_attempts: number | null;
+  time_limit_minutes: number | null;
+  shuffle_questions: boolean;
+  feedback_mode: QuizFeedbackMode;
+  pass_threshold_percent: number | null;
+  created_at: string;
+  updated_at: string;
 }
 
 // =============================================================================
