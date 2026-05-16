@@ -7,7 +7,6 @@ from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 from app.models.identity import BranchRole, MemberStatus, TutorRelationshipType
 
-
 # Profile ---------------------------------------------------------------------
 
 
@@ -134,6 +133,74 @@ class TutorContactUpdate(BaseModel):
     email: EmailStr | None = None
     is_primary: bool | None = None
     notes: str | None = None
+
+
+# BranchMemberWithProfile + BranchWithStats ----------------------------------
+
+
+class BranchMemberWithProfile(BaseModel):
+    """Membro da filial com dados do perfil embutidos."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    branch_id: UUID
+    profile_id: UUID
+    role: BranchRole
+    status: MemberStatus
+    created_at: datetime
+    full_name: str
+    avatar_url: str | None = None
+
+
+class BranchWithStats(BranchRead):
+    """Filial com contadores para o grid do OWNER."""
+
+    members_count: int = 0
+    students_count: int = 0
+    active_courses_count: int = 0
+
+
+class BranchInsights(BaseModel):
+    """Métricas da filial para o OWNER."""
+
+    total_members: int
+    active_students: int
+    active_courses: int
+    completion_rate_percent: float
+    pending_submissions: int
+
+
+# Invite codes ----------------------------------------------------------------
+
+
+class InviteCodeRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    branch_id: UUID
+    role: BranchRole
+    code: str
+    created_by: UUID
+    expires_at: datetime
+    max_uses: int
+    used_count: int
+    revoked_at: datetime | None = None
+    created_at: datetime
+    is_active: bool
+
+
+class InviteCodeCreate(BaseModel):
+    role: BranchRole = BranchRole.USUARIO
+    max_uses: int = Field(default=1, ge=1, le=100)
+    days_valid: int = Field(default=7, ge=1, le=90)
+
+
+class InviteRedeemInput(BaseModel):
+    code: str
+    email: EmailStr
+    password: str = Field(min_length=6)
+    full_name: str = Field(min_length=1, max_length=200)
 
 
 # Me (vista combinada do usuário logado) --------------------------------------

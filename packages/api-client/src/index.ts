@@ -18,6 +18,10 @@ import type {
   AssignmentPlayResponse,
   AssignmentType,
   Branch,
+  BranchInsights,
+  BranchMemberWithProfile,
+  BranchRole,
+  BranchWithStats,
   Course,
   CourseActivityItem,
   CourseDetail,
@@ -29,6 +33,8 @@ import type {
   DashboardStats,
   Grade,
   GradeInput,
+  InviteCode,
+  InviteRedeemInput,
   ItemProgress,
   ItemProgressStatus,
   Lesson,
@@ -143,6 +149,9 @@ export function createApiClient(options: ApiClientOptions) {
       /** GET /api/v1/branches/ — lista filiais do usuário */
       list: () => request<Branch[]>("/api/v1/branches/"),
 
+      /** GET /api/v1/branches/with-stats — lista com contadores (grid do OWNER) */
+      listWithStats: () => request<BranchWithStats[]>("/api/v1/branches/with-stats"),
+
       /** POST /api/v1/branches/ — cria filial (criador vira owner) */
       create: (data: {
         name: string;
@@ -161,6 +170,66 @@ export function createApiClient(options: ApiClientOptions) {
       /** PATCH /api/v1/branches/{id} — só owner */
       update: (id: string, data: Partial<Branch>) =>
         request<Branch>(`/api/v1/branches/${id}`, { method: "PATCH", body: data }),
+
+      /** GET /api/v1/branches/{id}/insights */
+      insights: (id: string) =>
+        request<BranchInsights>(`/api/v1/branches/${id}/insights`),
+
+      members: {
+        /** GET /api/v1/branches/{id}/members */
+        list: (branchId: string, params?: { role?: BranchRole; q?: string }) =>
+          request<BranchMemberWithProfile[]>(`/api/v1/branches/${branchId}/members`, {
+            searchParams: params,
+          }),
+
+        /** PATCH /api/v1/branches/{id}/members/{memberId} */
+        update: (
+          branchId: string,
+          memberId: string,
+          data: { role?: BranchRole; status?: string },
+        ) =>
+          request<BranchMemberWithProfile>(
+            `/api/v1/branches/${branchId}/members/${memberId}`,
+            { method: "PATCH", body: data },
+          ),
+
+        /** DELETE /api/v1/branches/{id}/members/{memberId} */
+        remove: (branchId: string, memberId: string) =>
+          request<void>(`/api/v1/branches/${branchId}/members/${memberId}`, {
+            method: "DELETE",
+          }),
+      },
+
+      invites: {
+        /** GET /api/v1/branches/{id}/invites */
+        list: (branchId: string) =>
+          request<InviteCode[]>(`/api/v1/branches/${branchId}/invites`),
+
+        /** POST /api/v1/branches/{id}/invites */
+        create: (
+          branchId: string,
+          data: { role?: BranchRole; max_uses?: number; days_valid?: number },
+        ) =>
+          request<InviteCode>(`/api/v1/branches/${branchId}/invites`, {
+            method: "POST",
+            body: data,
+          }),
+
+        /** DELETE /api/v1/branches/{id}/invites/{inviteId} */
+        revoke: (branchId: string, inviteId: string) =>
+          request<void>(`/api/v1/branches/${branchId}/invites/${inviteId}`, {
+            method: "DELETE",
+          }),
+      },
+    },
+
+    /** POST /api/v1/invites/redeem — público, cria conta + vínculo */
+    invites: {
+      redeem: (data: InviteRedeemInput) =>
+        request<{ user_id: string; role: string }>("/api/v1/invites/redeem", {
+          method: "POST",
+          body: data,
+        }),
     },
 
     dashboard: {

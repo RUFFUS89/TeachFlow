@@ -29,6 +29,7 @@ from app.models.identity import (
     TutorContact,
     TutorRelationshipType,
 )
+from app.models.invite import InviteCode
 from app.models.lesson import (
     ItemProgress,
     ItemProgressStatus,
@@ -56,6 +57,7 @@ __all__ = [
     "CourseModule",
     "CourseStatus",
     "Grade",
+    "InviteCode",
     "ItemProgress",
     "ItemProgressStatus",
     "Lesson",

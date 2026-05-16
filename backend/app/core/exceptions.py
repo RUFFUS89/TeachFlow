@@ -24,3 +24,8 @@ class ConflictError(HTTPException):
 class BadRequestError(HTTPException):
     def __init__(self, detail: str = "Requisição inválida"):
         super().__init__(status_code=status.HTTP_400_BAD_REQUEST, detail=detail)
+
+
+class GoneError(HTTPException):
+    def __init__(self, detail: str = "Este recurso não está mais disponível"):
+        super().__init__(status_code=status.HTTP_410_GONE, detail=detail)

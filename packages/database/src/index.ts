@@ -98,6 +98,46 @@ export interface BranchMember {
   created_at: string;
 }
 
+export interface BranchMemberWithProfile extends BranchMember {
+  full_name: string;
+  avatar_url: string | null;
+}
+
+export interface BranchWithStats extends Branch {
+  members_count: number;
+  students_count: number;
+  active_courses_count: number;
+}
+
+export interface BranchInsights {
+  total_members: number;
+  active_students: number;
+  active_courses: number;
+  completion_rate_percent: number;
+  pending_submissions: number;
+}
+
+export interface InviteCode {
+  id: string;
+  branch_id: string;
+  role: BranchRole;
+  code: string;
+  created_by: string;
+  expires_at: string;
+  max_uses: number;
+  used_count: number;
+  revoked_at: string | null;
+  created_at: string;
+  is_active: boolean;
+}
+
+export interface InviteRedeemInput {
+  code: string;
+  email: string;
+  password: string;
+  full_name: string;
+}
+
 // Vista combinada do /api/v1/me/
 export interface BranchMembership {
   branch_id: string;
