@@ -22,7 +22,13 @@ import type {
   CourseListItem,
   CourseModule,
   DashboardStats,
+  ItemProgress,
+  ItemProgressStatus,
+  Lesson,
+  LessonAttachment,
+  LessonComment,
   Me,
+  VideoProvider,
 } from "@teachflow/database";
 
 // =============================================================================
@@ -239,6 +245,88 @@ export function createApiClient(options: ApiClientOptions) {
       /** GET /api/v1/courses/{id}/activity */
       activity: (courseId: string) =>
         request<CourseActivityItem[]>(`/api/v1/courses/${courseId}/activity`),
+    },
+
+    lessons: {
+      /** GET /api/v1/lessons/{id} */
+      get: (id: string) => request<Lesson>(`/api/v1/lessons/${id}`),
+
+      /** PATCH /api/v1/lessons/{id} */
+      update: (
+        id: string,
+        data: Partial<
+          Pick<
+            Lesson,
+            | "title"
+            | "description"
+            | "content"
+            | "video_url"
+            | "video_provider"
+            | "video_duration_seconds"
+            | "is_essential"
+            | "published_at"
+          >
+        >,
+      ) => request<Lesson>(`/api/v1/lessons/${id}`, { method: "PATCH", body: data }),
+
+      /** DELETE /api/v1/lessons/{id} */
+      delete: (id: string) =>
+        request<void>(`/api/v1/lessons/${id}`, { method: "DELETE" }),
+
+      comments: {
+        /** GET /api/v1/lessons/{id}/comments */
+        list: (lessonId: string) =>
+          request<LessonComment[]>(`/api/v1/lessons/${lessonId}/comments`),
+
+        /** POST /api/v1/lessons/{id}/comments */
+        create: (lessonId: string, data: { content: string; parent_id?: string | null }) =>
+          request<LessonComment>(`/api/v1/lessons/${lessonId}/comments`, {
+            method: "POST",
+            body: data,
+          }),
+
+        /** DELETE /api/v1/lessons/comments/{commentId} */
+        delete: (commentId: string) =>
+          request<void>(`/api/v1/lessons/comments/${commentId}`, { method: "DELETE" }),
+      },
+
+      /** POST /api/v1/lessons/{id}/favorite — toggle */
+      favorite: (lessonId: string) =>
+        request<{ favorited: boolean }>(`/api/v1/lessons/${lessonId}/favorite`, {
+          method: "POST",
+        }),
+
+      /** POST /api/v1/lessons/{id}/progress */
+      updateProgress: (
+        lessonId: string,
+        data: { status?: ItemProgressStatus; watch_seconds?: number },
+      ) =>
+        request<ItemProgress>(`/api/v1/lessons/${lessonId}/progress`, {
+          method: "POST",
+          body: data,
+        }),
+
+      attachments: {
+        /** GET /api/v1/lessons/{id}/attachments */
+        list: (lessonId: string) =>
+          request<LessonAttachment[]>(`/api/v1/lessons/${lessonId}/attachments`),
+
+        /** POST /api/v1/lessons/{id}/attachments — registra após upload */
+        register: (
+          lessonId: string,
+          data: { name: string; storage_path: string; mime_type?: string | null; size_bytes?: number | null },
+        ) =>
+          request<LessonAttachment>(`/api/v1/lessons/${lessonId}/attachments`, {
+            method: "POST",
+            body: data,
+          }),
+
+        /** GET /api/v1/lessons/{id}/attachments/{attachmentId}/url */
+        signedUrl: (lessonId: string, attachmentId: string) =>
+          request<{ url: string }>(
+            `/api/v1/lessons/${lessonId}/attachments/${attachmentId}/url`,
+          ),
+      },
     },
   };
 }

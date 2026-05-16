@@ -201,6 +201,39 @@ export interface Lesson {
   updated_at: string;
 }
 
+export interface LessonAttachment {
+  id: string;
+  lesson_id: string;
+  name: string;
+  storage_path: string;
+  mime_type: string | null;
+  size_bytes: number | null;
+  created_at: string;
+}
+
+export interface LessonComment {
+  id: string;
+  lesson_id: string;
+  author_id: string;
+  parent_id: string | null;
+  author_name: string;
+  author_avatar_url: string | null;
+  content: string;
+  created_at: string;
+}
+
+export interface ItemProgress {
+  id: string;
+  course_item_id: string;
+  student_profile_id: string;
+  status: ItemProgressStatus;
+  started_at: string | null;
+  completed_at: string | null;
+  watch_seconds: number | null;
+  created_at: string;
+  updated_at: string;
+}
+
 // =============================================================================
 // Atividades
 // =============================================================================

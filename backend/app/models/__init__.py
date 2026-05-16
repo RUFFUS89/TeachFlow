@@ -22,7 +22,15 @@ from app.models.identity import (
     TutorContact,
     TutorRelationshipType,
 )
-from app.models.lesson import Lesson, VideoProvider
+from app.models.lesson import (
+    ItemProgress,
+    ItemProgressStatus,
+    Lesson,
+    LessonAttachment,
+    LessonComment,
+    LessonFavorite,
+    VideoProvider,
+)
 
 __all__ = [
     "Assignment",
@@ -37,7 +45,12 @@ __all__ = [
     "CourseItemKind",
     "CourseModule",
     "CourseStatus",
+    "ItemProgress",
+    "ItemProgressStatus",
     "Lesson",
+    "LessonAttachment",
+    "LessonComment",
+    "LessonFavorite",
     "MemberStatus",
     "Profile",
     "QuizFeedbackMode",

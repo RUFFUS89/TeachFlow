@@ -38,6 +38,8 @@ import {
 import { useRouter } from "next/navigation";
 import { useEffect, useOptimistic, useState, useTransition } from "react";
 
+import Link from "next/link";
+
 import { useApiClient } from "@/lib/api";
 
 // =============================================================================
@@ -333,6 +335,7 @@ function ContentTab({
                     <SortableItemRow
                       key={item.id}
                       item={item}
+                      courseId={course.id}
                       onDelete={() => handleDeleteItem(item.id)}
                     />
                   ))}
@@ -344,6 +347,7 @@ function ContentTab({
                 <SortableItemRow
                   key={item.id}
                   item={item}
+                  courseId={course.id}
                   onDelete={() => handleDeleteItem(item.id)}
                 />
               ))}
@@ -418,9 +422,11 @@ function ModuleHeader({
 
 function SortableItemRow({
   item,
+  courseId,
   onDelete,
 }: {
   item: CourseItem;
+  courseId: string;
   onDelete: () => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
@@ -461,6 +467,16 @@ function SortableItemRow({
       <Chip tone={item.kind === "lesson" ? "sage" : "caramel"} size="sm">
         {item.kind === "lesson" ? "Aula" : "Atividade"}
       </Chip>
+
+      {item.kind === "lesson" && item.lesson_id && (
+        <Link
+          href={`/courses/${courseId}/lessons/${item.lesson_id}`}
+          className="shrink-0 rounded p-1 text-inkMuted hover:text-ink"
+          title="Abrir aula"
+        >
+          <Icon name="ExternalLink" size={14} />
+        </Link>
+      )}
 
       <button
         type="button"
