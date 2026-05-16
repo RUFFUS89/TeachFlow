@@ -260,6 +260,72 @@ export interface Assignment {
   updated_at: string;
 }
 
+export interface QuizOption {
+  id: string;
+  question_id: string;
+  content: string;
+  is_correct: boolean;
+  position: number;
+}
+
+export interface QuizOptionStudent {
+  id: string;
+  question_id: string;
+  content: string;
+  position: number;
+}
+
+export interface QuizQuestion {
+  id: string;
+  assignment_id: string;
+  prompt: string;
+  hint: string | null;
+  type: QuestionType;
+  points: number;
+  position: number;
+  options: QuizOption[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface QuizQuestionStudent {
+  id: string;
+  prompt: string;
+  hint: string | null;
+  type: QuestionType;
+  points: number;
+  position: number;
+  options: QuizOptionStudent[];
+}
+
+export interface AssignmentCriterion {
+  id: string;
+  assignment_id: string;
+  name: string;
+  description: string | null;
+  max_score: number;
+  position: number;
+}
+
+export interface Submission {
+  id: string;
+  assignment_id: string;
+  student_profile_id: string;
+  attempt: number;
+  content: string | null;
+  status: SubmissionStatus;
+  submitted_at: string | null;
+  score: number | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AssignmentPlayResponse {
+  assignment: Assignment;
+  questions: QuizQuestionStudent[];
+  submission: Submission | null;
+}
+
 // =============================================================================
 // Dashboard
 // =============================================================================

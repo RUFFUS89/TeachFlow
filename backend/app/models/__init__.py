@@ -31,9 +31,12 @@ from app.models.lesson import (
     LessonFavorite,
     VideoProvider,
 )
+from app.models.quiz import AssignmentCriterion, QuestionType, QuizOption, QuizQuestion
+from app.models.submission import QuizResponse, Submission, SubmissionStatus
 
 __all__ = [
     "Assignment",
+    "AssignmentCriterion",
     "AssignmentType",
     "Base",
     "Branch",
@@ -53,7 +56,13 @@ __all__ = [
     "LessonFavorite",
     "MemberStatus",
     "Profile",
+    "QuestionType",
     "QuizFeedbackMode",
+    "QuizOption",
+    "QuizQuestion",
+    "QuizResponse",
+    "Submission",
+    "SubmissionStatus",
     "TutorContact",
     "TutorRelationshipType",
     "VideoProvider",

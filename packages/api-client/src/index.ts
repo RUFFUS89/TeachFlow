@@ -13,6 +13,10 @@
  */
 
 import type {
+  Assignment,
+  AssignmentCriterion,
+  AssignmentPlayResponse,
+  AssignmentType,
   Branch,
   Course,
   CourseActivityItem,
@@ -28,6 +32,10 @@ import type {
   LessonAttachment,
   LessonComment,
   Me,
+  QuizFeedbackMode,
+  QuizOption,
+  QuizQuestion,
+  Submission,
   VideoProvider,
 } from "@teachflow/database";
 
@@ -327,6 +335,132 @@ export function createApiClient(options: ApiClientOptions) {
             `/api/v1/lessons/${lessonId}/attachments/${attachmentId}/url`,
           ),
       },
+    },
+
+    assignments: {
+      /** POST /api/v1/assignments */
+      create: (data: {
+        course_id: string;
+        title: string;
+        instructions?: string | null;
+        type?: AssignmentType;
+        max_score?: number;
+        weight?: number;
+        due_date?: string | null;
+        allow_late_submission?: boolean;
+        max_attempts?: number | null;
+        time_limit_minutes?: number | null;
+        shuffle_questions?: boolean;
+        feedback_mode?: QuizFeedbackMode;
+        pass_threshold_percent?: number | null;
+      }) => request<Assignment>("/api/v1/assignments", { method: "POST", body: data }),
+
+      /** GET /api/v1/assignments/{id} */
+      get: (id: string) => request<Assignment>(`/api/v1/assignments/${id}`),
+
+      /** PATCH /api/v1/assignments/{id} */
+      update: (id: string, data: Partial<Omit<Assignment, "id" | "course_id" | "author_id" | "created_at" | "updated_at">>) =>
+        request<Assignment>(`/api/v1/assignments/${id}`, { method: "PATCH", body: data }),
+
+      /** DELETE /api/v1/assignments/{id} */
+      delete: (id: string) =>
+        request<void>(`/api/v1/assignments/${id}`, { method: "DELETE" }),
+
+      /** GET /api/v1/assignments/{id}/play — questões sem is_correct */
+      play: (id: string) =>
+        request<AssignmentPlayResponse>(`/api/v1/assignments/${id}/play`),
+
+      /** GET /api/v1/assignments/{id}/criteria */
+      criteria: (id: string) =>
+        request<AssignmentCriterion[]>(`/api/v1/assignments/${id}/criteria`),
+
+      questions: {
+        /** GET /api/v1/assignments/{id}/questions */
+        list: (assignmentId: string) =>
+          request<QuizQuestion[]>(`/api/v1/assignments/${assignmentId}/questions`),
+
+        /** POST /api/v1/assignments/{id}/questions */
+        create: (
+          assignmentId: string,
+          data: { prompt: string; type: string; points?: number; hint?: string | null; position?: number | null },
+        ) => request<QuizQuestion>(`/api/v1/assignments/${assignmentId}/questions`, { method: "POST", body: data }),
+
+        /** PATCH /api/v1/assignments/{id}/questions/{qid} */
+        update: (
+          assignmentId: string,
+          questionId: string,
+          data: Partial<{ prompt: string; hint: string | null; type: string; points: number; position: number }>,
+        ) =>
+          request<QuizQuestion>(`/api/v1/assignments/${assignmentId}/questions/${questionId}`, {
+            method: "PATCH",
+            body: data,
+          }),
+
+        /** DELETE /api/v1/assignments/{id}/questions/{qid} */
+        delete: (assignmentId: string, questionId: string) =>
+          request<void>(`/api/v1/assignments/${assignmentId}/questions/${questionId}`, {
+            method: "DELETE",
+          }),
+
+        options: {
+          /** POST /api/v1/assignments/{id}/questions/{qid}/options */
+          create: (
+            assignmentId: string,
+            questionId: string,
+            data: { content: string; is_correct?: boolean },
+          ) =>
+            request<QuizOption>(
+              `/api/v1/assignments/${assignmentId}/questions/${questionId}/options`,
+              { method: "POST", body: data },
+            ),
+
+          /** PATCH /api/v1/assignments/{id}/questions/{qid}/options/{oid} */
+          update: (
+            assignmentId: string,
+            questionId: string,
+            optionId: string,
+            data: Partial<{ content: string; is_correct: boolean; position: number }>,
+          ) =>
+            request<QuizOption>(
+              `/api/v1/assignments/${assignmentId}/questions/${questionId}/options/${optionId}`,
+              { method: "PATCH", body: data },
+            ),
+
+          /** DELETE /api/v1/assignments/{id}/questions/{qid}/options/{oid} */
+          delete: (assignmentId: string, questionId: string, optionId: string) =>
+            request<void>(
+              `/api/v1/assignments/${assignmentId}/questions/${questionId}/options/${optionId}`,
+              { method: "DELETE" },
+            ),
+        },
+      },
+
+      submissions: {
+        /** POST /api/v1/assignments/{id}/submissions — inicia draft */
+        start: (assignmentId: string) =>
+          request<Submission>(`/api/v1/assignments/${assignmentId}/submissions`, {
+            method: "POST",
+          }),
+      },
+    },
+
+    submissions: {
+      /** POST /api/v1/submissions/{id}/answers */
+      submitAnswers: (
+        submissionId: string,
+        data: {
+          answers: Array<{
+            question_id: string;
+            selected_option_id?: string | null;
+            text_answer?: string | null;
+          }>;
+          finalize?: boolean;
+        },
+      ) =>
+        request<Submission>(`/api/v1/submissions/${submissionId}/answers`, {
+          method: "POST",
+          body: data,
+        }),
     },
   };
 }

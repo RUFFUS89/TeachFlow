@@ -477,6 +477,15 @@ function SortableItemRow({
           <Icon name="ExternalLink" size={14} />
         </Link>
       )}
+      {item.kind === "assignment" && item.assignment_id && (
+        <Link
+          href={`/courses/${courseId}/assignments/${item.assignment_id}/edit`}
+          className="shrink-0 rounded p-1 text-inkMuted hover:text-ink"
+          title="Editar atividade"
+        >
+          <Icon name="ExternalLink" size={14} />
+        </Link>
+      )}
 
       <button
         type="button"
