@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { ApiError } from "@teachflow/api-client";
 import type { Assignment, QuizOption, QuizQuestion } from "@teachflow/database";
@@ -74,9 +74,9 @@ export function QuizBuilderClient({
         <Link href={`/courses/${courseId}`} className="hover:text-ink">
           Curso
         </Link>
-        <Icon name="ChevronRight" size={14} />
+        <Icon name="chevron-right" size={14} />
         <span className="text-ink">{assignment.title}</span>
-        <Icon name="ChevronRight" size={14} />
+        <Icon name="chevron-right" size={14} />
         <span className="text-ink">Editor</span>
       </div>
 
@@ -87,7 +87,7 @@ export function QuizBuilderClient({
         </div>
         <Link href={`/courses/${courseId}/assignments/${assignment.id}/play`}>
           <Button variant="ghost" size="sm">
-            <Icon name="Eye" size={14} />
+            <Icon name="eye" size={14} />
             Prévia
           </Button>
         </Link>
@@ -98,7 +98,7 @@ export function QuizBuilderClient({
         {questions.length === 0 ? (
           <Card>
             <div className="flex flex-col items-center gap-3 py-8 text-center">
-              <Icon name="ListChecks" size={32} className="text-inkMuted" />
+              <Icon name="quiz" size={32} className="text-inkMuted" />
               <p className="text-sm text-inkMuted">Nenhuma questão ainda. Adicione a primeira.</p>
             </div>
           </Card>
@@ -122,7 +122,7 @@ export function QuizBuilderClient({
 
       <div className="flex justify-center">
         <Button onClick={handleAddQuestion} loading={addingQuestion} variant="ghost">
-          <Icon name="Plus" size={14} />
+          <Icon name="plus" size={14} />
           Adicionar questão
         </Button>
       </div>
@@ -201,9 +201,9 @@ function QuestionEditor({
           onClick={(e) => { e.stopPropagation(); onDelete(); }}
           className="shrink-0 rounded p-1 text-inkMuted hover:text-blushInk"
         >
-          <Icon name="Trash2" size={14} />
+          <Icon name="trash" size={14} />
         </button>
-        <Icon name={expanded ? "ChevronDown" : "ChevronRight"} size={14} className="shrink-0 text-inkMuted" />
+        <Icon name={expanded ? "chevron-down" : "chevron-right"} size={14} className="shrink-0 text-inkMuted" />
       </button>
 
       {/* Body */}
@@ -351,7 +351,7 @@ function OptionsEditor({
             ].join(" ")}
             title={opt.is_correct ? "Correta" : "Marcar como correta"}
           >
-            {opt.is_correct && <Icon name="Check" size={10} />}
+            {opt.is_correct && <Icon name="check" size={10} />}
           </button>
           <span className="flex-1 text-sm">{opt.content}</span>
           {!isTrueFalse && (
@@ -360,7 +360,7 @@ function OptionsEditor({
               onClick={() => handleDeleteOption(opt.id)}
               className="shrink-0 text-inkMuted hover:text-blushInk"
             >
-              <Icon name="Trash2" size={12} />
+              <Icon name="trash" size={12} />
             </button>
           )}
         </div>
@@ -375,7 +375,7 @@ function OptionsEditor({
             onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleAddOption(); }}}
           />
           <Button size="sm" variant="ghost" onClick={handleAddOption} loading={adding} disabled={!newContent.trim()}>
-            <Icon name="Plus" size={14} />
+            <Icon name="plus" size={14} />
           </Button>
         </div>
       )}

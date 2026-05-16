@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
 from app.database import engine
-from app.routers import assignments, branches, courses, dashboard, health, lessons, me
+from app.routers import assignments, branches, courses, dashboard, health, lessons, me, submissions
 
 logger = logging.getLogger(__name__)
 settings = get_settings()
@@ -47,6 +47,7 @@ app.include_router(courses.router, prefix="/api/v1")
 app.include_router(dashboard.router, prefix="/api/v1")
 app.include_router(lessons.router, prefix="/api/v1")
 app.include_router(assignments.router, prefix="/api/v1")
+app.include_router(submissions.router, prefix="/api/v1")
 
 
 @app.get("/", include_in_schema=False)

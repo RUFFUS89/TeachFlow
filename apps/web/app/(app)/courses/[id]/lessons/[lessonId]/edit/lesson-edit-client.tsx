@@ -1,7 +1,7 @@
-"use client";
+﻿"use client";
 
 import { ApiError } from "@teachflow/api-client";
-import type { Lesson } from "@teachflow/database";
+import type { Lesson, VideoProvider } from "@teachflow/database";
 import {
   Button,
   Card,
@@ -41,7 +41,7 @@ export function LessonEditClient({
   const [description, setDescription] = useState(initial.description ?? "");
   const [content, setContent] = useState(initial.content ?? "");
   const [videoUrl, setVideoUrl] = useState(initial.video_url ?? "");
-  const [videoProvider, setVideoProvider] = useState<Lesson["video_provider"] | "">(
+  const [videoProvider, setVideoProvider] = useState<VideoProvider | "">(
     initial.video_provider ?? "",
   );
   const [isEssential, setIsEssential] = useState(initial.is_essential);
@@ -79,14 +79,14 @@ export function LessonEditClient({
         <Link href={`/courses/${courseId}`} className="hover:text-ink">
           Curso
         </Link>
-        <Icon name="ChevronRight" size={14} />
+        <Icon name="chevron-right" size={14} />
         <Link
           href={`/courses/${courseId}/lessons/${initial.id}`}
           className="hover:text-ink"
         >
           {initial.title}
         </Link>
-        <Icon name="ChevronRight" size={14} />
+        <Icon name="chevron-right" size={14} />
         <span className="text-ink">Editar</span>
       </div>
 
@@ -94,7 +94,7 @@ export function LessonEditClient({
         <PageHeader title="Editar aula" />
         <Link href={`/courses/${courseId}/lessons/${initial.id}`}>
           <Button variant="ghost" size="sm">
-            <Icon name="Eye" size={14} />
+            <Icon name="eye" size={14} />
             Ver aula
           </Button>
         </Link>
@@ -138,7 +138,7 @@ export function LessonEditClient({
                 id="video-provider"
                 value={videoProvider}
                 onChange={(e) =>
-                  setVideoProvider(e.target.value as Lesson["video_provider"] | "")
+                  setVideoProvider(e.target.value as VideoProvider | "")
                 }
               >
                 {PROVIDER_OPTIONS.map((o) => (

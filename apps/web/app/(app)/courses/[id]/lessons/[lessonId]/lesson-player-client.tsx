@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { ApiError } from "@teachflow/api-client";
 import type { CourseDetail, Lesson, LessonAttachment, LessonComment } from "@teachflow/database";
@@ -65,7 +65,7 @@ export function LessonPlayerClient({
         <Link href={`/courses/${course.id}`} className="hover:text-ink">
           {course.title}
         </Link>
-        <Icon name="ChevronRight" size={14} />
+        <Icon name="chevron-right" size={14} />
         <span className="text-ink">{lesson.title}</span>
       </div>
 
@@ -81,7 +81,7 @@ export function LessonPlayerClient({
           {isStaff && (
             <Link href={`/courses/${course.id}/lessons/${lesson.id}/edit`}>
               <Button variant="ghost" size="sm">
-                <Icon name="Pencil" size={14} />
+                <Icon name="edit" size={14} />
                 Editar
               </Button>
             </Link>
@@ -97,7 +97,7 @@ export function LessonPlayerClient({
             ].join(" ")}
             title={favorited ? "Remover dos favoritos" : "Adicionar aos favoritos"}
           >
-            <Icon name="Heart" size={16} />
+            <Icon name="heart" size={16} />
           </button>
         </div>
       </div>
@@ -112,12 +112,12 @@ export function LessonPlayerClient({
         <div className="flex justify-end">
           {progress === "completed" ? (
             <Chip tone="sage">
-              <Icon name="CheckCircle2" size={14} />
+              <Icon name="check-circle" size={14} />
               Concluída
             </Chip>
           ) : (
             <Button size="sm" onClick={handleMarkCompleted}>
-              <Icon name="CheckCircle2" size={14} />
+              <Icon name="check-circle" size={14} />
               Marcar como concluída
             </Button>
           )}
@@ -210,7 +210,7 @@ function VideoPlayer({
   return (
     <Card>
       <div className="flex items-center gap-2 text-sm text-inkMuted">
-        <Icon name="ExternalLink" size={14} />
+        <Icon name="external" size={14} />
         <a href={url} target="_blank" rel="noopener noreferrer" className="underline hover:text-ink">
           Abrir vídeo externo
         </a>
@@ -227,7 +227,7 @@ function ContentTab({ lesson }: { lesson: Lesson }) {
   if (!lesson.content) {
     return (
       <EmptyState
-        icon="BookOpen"
+        icon="book"
         title="Sem conteúdo adicional"
         description="O professor não adicionou conteúdo textual a esta aula."
       />
@@ -322,7 +322,7 @@ function CommentsTab({
 
       {comments.length === 0 ? (
         <EmptyState
-          icon="MessageCircle"
+          icon="comment"
           title="Nenhum comentário ainda"
           description="Seja o primeiro a comentar nesta aula."
         />
@@ -349,7 +349,7 @@ function CommentsTab({
                         className="text-inkMuted hover:text-blushInk"
                         title="Remover"
                       >
-                        <Icon name="Trash2" size={12} />
+                        <Icon name="trash" size={12} />
                       </button>
                     )}
                   </div>
@@ -406,7 +406,7 @@ function MaterialsTab({
   if (attachments.length === 0) {
     return (
       <EmptyState
-        icon="Paperclip"
+        icon="paperclip"
         title="Nenhum material"
         description={
           isStaff
@@ -424,7 +424,7 @@ function MaterialsTab({
           key={a.id}
           className="flex items-center gap-3 rounded-card border border-border bg-surface px-4 py-3"
         >
-          <Icon name="Paperclip" size={16} className="shrink-0 text-inkMuted" />
+          <Icon name="paperclip" size={16} className="shrink-0 text-inkMuted" />
           <div className="flex-1 min-w-0">
             <p className="truncate text-sm font-medium">{a.name}</p>
             {a.size_bytes && (
@@ -438,9 +438,9 @@ function MaterialsTab({
             onClick={() => handleDownload(a)}
             disabled={fetchingUrl === a.id}
             className="shrink-0 rounded p-1 text-inkMuted hover:text-ink disabled:opacity-50"
-            title="Download"
+            title="download"
           >
-            <Icon name={fetchingUrl === a.id ? "Clock" : "Download"} size={16} />
+            <Icon name={fetchingUrl === a.id ? "clock" : "download"} size={16} />
           </button>
         </div>
       ))}

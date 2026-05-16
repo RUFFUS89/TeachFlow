@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { ApiError } from "@teachflow/api-client";
 import type { AssignmentPlayResponse, QuizQuestionStudent } from "@teachflow/database";
@@ -88,7 +88,7 @@ export function QuizPlayClient({
   if (questions.length === 0) {
     return (
       <EmptyState
-        icon="ListChecks"
+        icon="quiz"
         title="Nenhuma questão"
         description="Este quiz ainda não tem questões."
         action={
@@ -107,7 +107,7 @@ export function QuizPlayClient({
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2 text-sm text-inkMuted">
             <Link href={`/courses/${courseId}`} className="hover:text-ink">Curso</Link>
-            <Icon name="ChevronRight" size={14} />
+            <Icon name="chevron-right" size={14} />
             <span className="text-ink">{assignment.title}</span>
           </div>
           <PageHeader title={assignment.title} />
@@ -121,7 +121,7 @@ export function QuizPlayClient({
           </Chip>
           {assignment.time_limit_minutes && (
             <span className="flex items-center gap-1 text-xs text-inkMuted">
-              <Icon name="Clock" size={12} />
+              <Icon name="clock" size={12} />
               {assignment.time_limit_minutes} min
             </span>
           )}
@@ -131,7 +131,7 @@ export function QuizPlayClient({
       {isAlreadyDone ? (
         <Card tone="sage">
           <div className="flex items-center gap-3">
-            <Icon name="CheckCircle2" size={20} className="text-sageInk" />
+            <Icon name="check-circle" size={20} className="text-sageInk" />
             <div>
               <p className="font-medium text-sageInk">Quiz entregue</p>
               <p className="text-sm text-sageInk opacity-80">
@@ -168,7 +168,7 @@ export function QuizPlayClient({
               loading={submitting}
               disabled={answeredCount === 0}
             >
-              <Icon name="CheckCircle2" size={14} />
+              <Icon name="check-circle" size={14} />
               Entregar quiz
             </Button>
           </div>

@@ -141,7 +141,7 @@ export function CourseDetailClient({
       )}
       {tab === "submissions" && (
         <EmptyState
-          icon="ClipboardList"
+          icon="clip"
           title="Entregas chegam na Fase 6"
           description="A correção de atividades estará disponível em breve."
         />
@@ -174,11 +174,11 @@ function CourseHeroCard({ course }: { course: CourseDetail }) {
         )}
         <div className="mt-2 flex gap-4 text-sm opacity-60">
           <span className="flex items-center gap-1">
-            <Icon name="Users" size={14} />
+            <Icon name="people" size={14} />
             {course.students_count} alunos
           </span>
           <span className="flex items-center gap-1">
-            <Icon name="BookOpen" size={14} />
+            <Icon name="book" size={14} />
             {course.items_count} itens
           </span>
         </div>
@@ -269,8 +269,9 @@ function ContentTab({
   const unmoduledItems: CourseItem[] = [];
   for (const item of items) {
     if (item.module_id) {
-      if (!itemsByModule[item.module_id]) itemsByModule[item.module_id] = [];
-      itemsByModule[item.module_id].push(item);
+      const modId = item.module_id;
+      if (!itemsByModule[modId]) itemsByModule[modId] = [];
+      itemsByModule[modId]!.push(item);
     } else {
       unmoduledItems.push(item);
     }
@@ -285,7 +286,7 @@ function ContentTab({
           size="sm"
           onClick={() => setShowAddModule(true)}
         >
-          <Icon name="Plus" size={14} />
+          <Icon name="plus" size={14} />
           Módulo
         </Button>
         <Button
@@ -295,19 +296,19 @@ function ContentTab({
             setShowAddItem(true);
           }}
         >
-          <Icon name="Plus" size={14} />
+          <Icon name="plus" size={14} />
           Adicionar item
         </Button>
       </div>
 
       {items.length === 0 && modules.length === 0 ? (
         <EmptyState
-          icon="BookOpen"
+          icon="book"
           title="Nenhum conteúdo ainda"
           description="Adicione aulas e atividades para montar a sequência do curso."
           action={
             <Button onClick={() => setShowAddItem(true)}>
-              <Icon name="Plus" size={14} />
+              <Icon name="plus" size={14} />
               Adicionar primeiro item
             </Button>
           }
@@ -395,7 +396,7 @@ function ModuleHeader({
   return (
     <div className="flex items-center justify-between rounded-card border border-border bg-surface2 px-4 py-2">
       <div className="flex items-center gap-2">
-        <Icon name="ChevronRight" size={14} className="text-inkMuted" />
+        <Icon name="chevron-right" size={14} className="text-inkMuted" />
         <span className="text-sm font-semibold">{module.name}</span>
       </div>
       <div className="flex items-center gap-1">
@@ -405,7 +406,7 @@ function ModuleHeader({
           className="rounded p-1 text-inkMuted hover:text-ink"
           title="Adicionar item neste módulo"
         >
-          <Icon name="Plus" size={14} />
+          <Icon name="plus" size={14} />
         </button>
         <button
           type="button"
@@ -413,7 +414,7 @@ function ModuleHeader({
           className="rounded p-1 text-inkMuted hover:text-blushInk"
           title="Remover módulo"
         >
-          <Icon name="Trash2" size={14} />
+          <Icon name="trash" size={14} />
         </button>
       </div>
     </div>
@@ -452,12 +453,12 @@ function SortableItemRow({
         className="cursor-grab text-inkMuted active:cursor-grabbing"
         aria-label="Arrastar"
       >
-        <Icon name="GripVertical" size={16} />
+        <Icon name="drag" size={16} />
       </button>
 
       <div className="flex flex-1 items-center gap-2 min-w-0">
         <Icon
-          name={item.kind === "lesson" ? "Video" : "ClipboardList"}
+          name={item.kind === "lesson" ? "lesson" : "clip"}
           size={16}
           className="shrink-0 text-inkMuted"
         />
@@ -474,7 +475,7 @@ function SortableItemRow({
           className="shrink-0 rounded p-1 text-inkMuted hover:text-ink"
           title="Abrir aula"
         >
-          <Icon name="ExternalLink" size={14} />
+          <Icon name="external" size={14} />
         </Link>
       )}
       {item.kind === "assignment" && item.assignment_id && (
@@ -483,7 +484,7 @@ function SortableItemRow({
           className="shrink-0 rounded p-1 text-inkMuted hover:text-ink"
           title="Editar atividade"
         >
-          <Icon name="ExternalLink" size={14} />
+          <Icon name="external" size={14} />
         </Link>
       )}
 
@@ -493,7 +494,7 @@ function SortableItemRow({
         className="shrink-0 rounded p-1 text-inkMuted hover:text-blushInk"
         title="Remover item"
       >
-        <Icon name="Trash2" size={14} />
+        <Icon name="trash" size={14} />
       </button>
     </div>
   );
@@ -553,7 +554,7 @@ function AddItemModal({
                 kind === k ? "border-ink bg-ink text-bg" : "border-border hover:bg-surface2",
               ].join(" ")}
             >
-              <Icon name={k === "lesson" ? "Video" : "ClipboardList"} size={16} />
+              <Icon name={k === "lesson" ? "lesson" : "clip"} size={16} />
               {k === "lesson" ? "Aula" : "Atividade"}
             </button>
           ))}
@@ -699,19 +700,19 @@ function StudentsTab({
     <div className="flex flex-col gap-4">
       <div className="flex justify-end">
         <Button size="sm" onClick={() => setShowEnrollModal(true)}>
-          <Icon name="Plus" size={14} />
+          <Icon name="plus" size={14} />
           Matricular aluno
         </Button>
       </div>
 
       {enrollments.length === 0 ? (
         <EmptyState
-          icon="Users"
+          icon="people"
           title="Nenhum aluno matriculado"
           description="Matricule alunos para que eles possam acessar o conteúdo do curso."
           action={
             <Button onClick={() => setShowEnrollModal(true)}>
-              <Icon name="Plus" size={14} />
+              <Icon name="plus" size={14} />
               Matricular primeiro aluno
             </Button>
           }
@@ -759,7 +760,7 @@ function StudentsTab({
                       className="rounded p-1 text-inkMuted hover:text-blushInk"
                       title="Remover matrícula"
                     >
-                      <Icon name="Trash2" size={14} />
+                      <Icon name="trash" size={14} />
                     </button>
                   </td>
                 </tr>

@@ -338,6 +338,101 @@ export interface DashboardStats {
 }
 
 // =============================================================================
+// Correção (Fase 6)
+// =============================================================================
+
+export interface Grade {
+  id: string;
+  assignment_id: string;
+  student_profile_id: string;
+  submission_id: string | null;
+  score: number;
+  feedback: string | null;
+  graded_by: string;
+  graded_at: string;
+  released_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CriterionScore {
+  id: string;
+  submission_id: string;
+  criterion_id: string;
+  criterion_name: string;
+  max_score: number;
+  score: number;
+  feedback: string | null;
+  updated_at: string;
+}
+
+export interface SubmissionAttachment {
+  id: string;
+  submission_id: string;
+  name: string;
+  storage_path: string;
+  mime_type: string | null;
+  size_bytes: number | null;
+  created_at: string;
+}
+
+export interface SubmissionListItem {
+  id: string;
+  assignment_id: string;
+  assignment_title: string;
+  assignment_type: AssignmentType;
+  course_id: string | null;
+  course_title: string;
+  student_profile_id: string;
+  student_name: string;
+  attempt: number;
+  status: SubmissionStatus;
+  submitted_at: string | null;
+  score: number | null;
+  is_late: boolean;
+  created_at: string;
+}
+
+export interface SubmissionDetail extends Submission {
+  assignment_title: string;
+  assignment_type: AssignmentType;
+  course_title: string;
+  student_name: string;
+  is_late: boolean;
+  grade: Grade | null;
+  criterion_scores: CriterionScore[];
+  attachments: SubmissionAttachment[];
+}
+
+export interface SubmissionsSummary {
+  total: number;
+  pending: number;
+  graded: number;
+  late: number;
+}
+
+export interface GradeInput {
+  score: number;
+  feedback?: string | null;
+  release?: boolean;
+}
+
+export interface SaveCriteriaPayload {
+  scores: Array<{ criterion_id: string; score: number; feedback?: string | null }>;
+}
+
+export interface Notification {
+  id: string;
+  recipient_profile_id: string;
+  type: NotificationType | string;
+  title: string;
+  body: string | null;
+  link: string | null;
+  read_at: string | null;
+  created_at: string;
+}
+
+// =============================================================================
 // Re-exports de conveniência
 // =============================================================================
 

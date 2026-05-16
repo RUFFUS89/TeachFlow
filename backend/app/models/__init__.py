@@ -13,6 +13,13 @@ from app.models.course import (
     CourseModule,
     CourseStatus,
 )
+from app.models.grade import (
+    Grade,
+    Notification,
+    NotificationType,
+    SubmissionAttachment,
+    SubmissionCriterionScore,
+)
 from app.models.identity import (
     Branch,
     BranchMember,
@@ -48,6 +55,7 @@ __all__ = [
     "CourseItemKind",
     "CourseModule",
     "CourseStatus",
+    "Grade",
     "ItemProgress",
     "ItemProgressStatus",
     "Lesson",
@@ -55,6 +63,8 @@ __all__ = [
     "LessonComment",
     "LessonFavorite",
     "MemberStatus",
+    "Notification",
+    "NotificationType",
     "Profile",
     "QuestionType",
     "QuizFeedbackMode",
@@ -62,6 +72,8 @@ __all__ = [
     "QuizQuestion",
     "QuizResponse",
     "Submission",
+    "SubmissionAttachment",
+    "SubmissionCriterionScore",
     "SubmissionStatus",
     "TutorContact",
     "TutorRelationshipType",

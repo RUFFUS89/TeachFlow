@@ -25,17 +25,25 @@ import type {
   CourseItem,
   CourseListItem,
   CourseModule,
+  CriterionScore,
   DashboardStats,
+  Grade,
+  GradeInput,
   ItemProgress,
   ItemProgressStatus,
   Lesson,
   LessonAttachment,
   LessonComment,
   Me,
+  Notification,
   QuizFeedbackMode,
   QuizOption,
   QuizQuestion,
+  SaveCriteriaPayload,
   Submission,
+  SubmissionDetail,
+  SubmissionListItem,
+  SubmissionsSummary,
   VideoProvider,
 } from "@teachflow/database";
 
@@ -458,6 +466,47 @@ export function createApiClient(options: ApiClientOptions) {
         },
       ) =>
         request<Submission>(`/api/v1/submissions/${submissionId}/answers`, {
+          method: "POST",
+          body: data,
+        }),
+
+      /** GET /api/v1/submissions/summary?branch_id= */
+      summary: (branchId: string) =>
+        request<SubmissionsSummary>("/api/v1/submissions/summary", {
+          searchParams: { branch_id: branchId },
+        }),
+
+      /** GET /api/v1/submissions?branch_id=&status=&course_id=&q= */
+      list: (params: {
+        branch_id: string;
+        status?: string;
+        course_id?: string;
+        q?: string;
+        limit?: number;
+        offset?: number;
+      }) => request<SubmissionListItem[]>("/api/v1/submissions", { searchParams: params }),
+
+      /** GET /api/v1/submissions/{id} */
+      get: (id: string) => request<SubmissionDetail>(`/api/v1/submissions/${id}`),
+
+      /** PATCH /api/v1/submissions/{id} — rascunho de correção */
+      draft: (id: string, data: GradeInput) =>
+        request<SubmissionDetail>(`/api/v1/submissions/${id}`, { method: "PATCH", body: data }),
+
+      /** POST /api/v1/submissions/{id}/grade — lança nota */
+      grade: (id: string, data: GradeInput) =>
+        request<SubmissionDetail>(`/api/v1/submissions/${id}/grade`, {
+          method: "POST",
+          body: data,
+        }),
+
+      /** POST /api/v1/submissions/{id}/return */
+      returnForRework: (id: string) =>
+        request<SubmissionDetail>(`/api/v1/submissions/${id}/return`, { method: "POST" }),
+
+      /** POST /api/v1/submissions/{id}/criteria-scores */
+      saveCriteria: (id: string, data: SaveCriteriaPayload) =>
+        request<CriterionScore[]>(`/api/v1/submissions/${id}/criteria-scores`, {
           method: "POST",
           body: data,
         }),

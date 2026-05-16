@@ -39,6 +39,7 @@ import {
   Pencil,
   Play,
   Plus,
+  RefreshCw,
   Search,
   Settings,
   SlidersHorizontal,
@@ -51,6 +52,7 @@ import {
   User,
   Users,
   Video,
+  X,
   XCircle,
   type LucideIcon,
 } from "lucide-react";
@@ -102,6 +104,7 @@ export const ICONS = {
   "plus": Plus,
   "project": Folders,
   "quiz": ListChecks,
+  "refresh": RefreshCw,
   "search": Search,
   "settings": Settings,
   "sparkle": Sparkles,
@@ -111,6 +114,7 @@ export const ICONS = {
   "upload": Upload,
   "user": User,
   "warning": TriangleAlert,
+  "x": X,
 } as const satisfies Record<string, LucideIcon>;
 
 export type IconName = keyof typeof ICONS;

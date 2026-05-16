@@ -8,9 +8,10 @@ from sqlalchemy import func as sa_func
 from sqlalchemy import select
 
 from app.auth.dependencies import CurrentProfile, DbSession
+from app.core.constants import ENEM_REDACAO_CRITERIA
 from app.core.exceptions import NotFoundError
 from app.core.permissions import require_branch_member, require_branch_staff
-from app.models.assignment import Assignment
+from app.models.assignment import Assignment, AssignmentType
 from app.models.course import Course
 from app.models.quiz import AssignmentCriterion, QuizOption, QuizQuestion
 from app.models.submission import QuizResponse, Submission, SubmissionStatus
@@ -154,6 +155,20 @@ async def create_assignment(
         pass_threshold_percent=payload.pass_threshold_percent,
     )
     db.add(assignment)
+    await db.flush()  # gera o UUID antes de criar critérios
+
+    # Semente automática de critérios ENEM para redações
+    if payload.type == AssignmentType.EXAM:
+        for i, (name, max_score) in enumerate(ENEM_REDACAO_CRITERIA, start=1):
+            db.add(
+                AssignmentCriterion(
+                    assignment_id=assignment.id,
+                    name=name,
+                    max_score=max_score,
+                    position=i,
+                )
+            )
+
     await db.commit()
     await db.refresh(assignment)
     return assignment
