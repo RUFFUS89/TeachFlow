@@ -75,21 +75,15 @@ async def require_branch_role(
         raise ForbiddenError(f"Esta ação requer um dos papéis: {nomes}")
 
 
-async def require_branch_staff(
-    db: AsyncSession, user_id: UUID, branch_id: UUID
-) -> None:
+async def require_branch_staff(db: AsyncSession, user_id: UUID, branch_id: UUID) -> None:
     await require_branch_role(db, user_id, branch_id, [BranchRole.OWNER, BranchRole.ADMIN])
 
 
-async def require_branch_owner(
-    db: AsyncSession, user_id: UUID, branch_id: UUID
-) -> None:
+async def require_branch_owner(db: AsyncSession, user_id: UUID, branch_id: UUID) -> None:
     await require_branch_role(db, user_id, branch_id, [BranchRole.OWNER])
 
 
-async def require_branch_member(
-    db: AsyncSession, user_id: UUID, branch_id: UUID
-) -> None:
+async def require_branch_member(db: AsyncSession, user_id: UUID, branch_id: UUID) -> None:
     await require_branch_role(
         db, user_id, branch_id, [BranchRole.OWNER, BranchRole.ADMIN, BranchRole.USUARIO]
     )

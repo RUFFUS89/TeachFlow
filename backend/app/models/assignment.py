@@ -54,9 +54,7 @@ class Assignment(Base):
     title: Mapped[str] = mapped_column(String, nullable=False)
     instructions: Mapped[str | None] = mapped_column(Text)
     type: Mapped[AssignmentType] = mapped_column(assignment_type_pg, nullable=False)
-    max_score: Mapped[Decimal] = mapped_column(
-        Numeric(6, 2), nullable=False, server_default="10"
-    )
+    max_score: Mapped[Decimal] = mapped_column(Numeric(6, 2), nullable=False, server_default="10")
     weight: Mapped[Decimal] = mapped_column(Numeric(5, 2), nullable=False, server_default="1.0")
     due_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     available_from: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
@@ -66,9 +64,7 @@ class Assignment(Base):
     )
     max_attempts: Mapped[int | None] = mapped_column(Integer)
     time_limit_minutes: Mapped[int | None] = mapped_column(Integer)
-    shuffle_questions: Mapped[bool] = mapped_column(
-        Boolean, nullable=False, server_default="false"
-    )
+    shuffle_questions: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default="false")
     feedback_mode: Mapped[QuizFeedbackMode] = mapped_column(
         quiz_feedback_mode_pg, nullable=False, server_default="on_submit"
     )

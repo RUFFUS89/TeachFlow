@@ -573,5 +573,5 @@ async def get_course_activity(
             )
             for row in rows.all()
         ]
-    except Exception:  # noqa: BLE001
+    except Exception:
         return []

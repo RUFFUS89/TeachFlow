@@ -2,13 +2,13 @@
 
 from logging.config import fileConfig
 
-from alembic import context
 from sqlalchemy import engine_from_config, pool
 
+from alembic import context
 from app.config import get_settings
 
 # Importa todos os modelos pra que o autogenerate enxergue
-from app.models import Base  # noqa: F401
+from app.models import Base
 
 config = context.config
 
@@ -27,9 +27,19 @@ if config.config_file_name is not None:
 target_metadata = Base.metadata
 
 # auth e storage do Supabase ficam fora do nosso controle — não inclua no autogenerate
-EXCLUDED_SCHEMAS = {"auth", "storage", "graphql", "graphql_public", "extensions",
-                    "net", "pgsodium", "pgsodium_masks", "realtime", "supabase_functions",
-                    "vault"}
+EXCLUDED_SCHEMAS = {
+    "auth",
+    "storage",
+    "graphql",
+    "graphql_public",
+    "extensions",
+    "net",
+    "pgsodium",
+    "pgsodium_masks",
+    "realtime",
+    "supabase_functions",
+    "vault",
+}
 
 
 def include_object(object, name, type_, reflected, compare_to):

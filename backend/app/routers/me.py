@@ -13,9 +13,7 @@ router = APIRouter(prefix="/me", tags=["me"])
 @router.get("/", response_model=MeRead)
 async def get_me(profile: CurrentProfile, db: DbSession) -> MeRead:
     """Retorna o perfil do usuário logado e suas filiais."""
-    result = await db.execute(
-        select(BranchMember).where(BranchMember.profile_id == profile.id)
-    )
+    result = await db.execute(select(BranchMember).where(BranchMember.profile_id == profile.id))
     memberships = result.scalars().all()
     return MeRead(
         profile=ProfileRead.model_validate(profile),

@@ -15,16 +15,17 @@ from sqlalchemy import (
     Boolean,
     CheckConstraint,
     Date,
-    Enum as SAEnum,
     ForeignKey,
     String,
     UniqueConstraint,
+)
+from sqlalchemy import (
+    Enum as SAEnum,
 )
 from sqlalchemy.dialects.postgresql import UUID as PgUUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base, created_at, updated_at, uuid_pk
-
 
 # Enums (refletem os tipos do Postgres) ----------------------------------------
 

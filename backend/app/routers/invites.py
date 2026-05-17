@@ -30,9 +30,7 @@ async def redeem_invite(payload: InviteRedeemInput, db: DbSession) -> dict[str, 
     """
     # 1. Carrega o convite com lock pra evitar race condition
     result = await db.execute(
-        select(InviteCode)
-        .where(InviteCode.code == payload.code)
-        .with_for_update(skip_locked=False)
+        select(InviteCode).where(InviteCode.code == payload.code).with_for_update(skip_locked=False)
     )
     inv = result.scalar_one_or_none()
 
